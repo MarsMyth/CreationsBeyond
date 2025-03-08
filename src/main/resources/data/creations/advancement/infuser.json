@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "creations:infused_foundation"
+    },
+    "title": "The Infuser",
+    "description": "Infuse Simple Alloy with Stripped Spruce Logs",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "creations:alloyed",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "creations:infused_foundation",
+            "count": {
+              "min": 1,
+              "max": 64
+            }
+          }
+        ]
+      }
+    }
+  }
+}

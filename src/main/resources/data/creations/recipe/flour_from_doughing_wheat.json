@@ -1,0 +1,10 @@
+{
+  "type": "creations:doughing",
+  "ingredient": {
+    "item": "minecraft:wheat"
+  },
+  "result": {
+    "count": 4,
+    "id": "creations:wheat_flour"
+  }
+}

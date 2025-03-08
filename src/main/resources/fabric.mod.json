@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "creations",
+	"version": "${version}",
+	"name": "Creations Beyond",
+	"description": "Warning: This mod will not be compatible with Create!",
+	"authors": [
+		"Mythical Studios"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/creations/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.mars_myth.creations.CreationsBeyond"
+		],
+		"client": [
+			"net.mars_myth.creations.CreationsBeyondClient"
+		],
+		"fabric-datagen": [
+			"net.mars_myth.creations.CreationsBeyondDataGenerator"
+		],
+		"rei_client": [
+			"net.mars_myth.creations.compat.CreationsBeyondREIClient"
+		]
+	},
+	"mixins": [
+		"creations.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

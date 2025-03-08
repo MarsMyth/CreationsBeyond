@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "creations:infused_foundation",
+      "count": 1
+    },
+    "title": "Creations Beyond",
+    "description": "The mod may look similar to Create but it isn't",
+    "background": "creations:textures/block/infused_foundation.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:crafting_table",
+            "count": {
+              "min": 1,
+              "max": 64
+            }
+          }
+        ]
+      }
+    }
+  }
+}

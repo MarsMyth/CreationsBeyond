@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "creations:simple_alloy",
+      "count": 1
+    },
+    "title": "Alloyed Together",
+    "description": "You've entered the first era by crafting Simple Alloy",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "creations:creations",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "creations:simple_alloy",
+            "count": {
+              "min": 1,
+              "max": 64
+            }
+          }
+        ]
+      }
+    }
+  }
+}
