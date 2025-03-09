@@ -1,0 +1,16 @@
+{
+  "type": "creations:infusing",
+  "ingredient": [
+    {
+      "item": "minecraft:andesite"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    }
+
+  ],
+  "result": {
+    "count": 2,
+    "id": "creations:simple_alloy"
+  }
+}

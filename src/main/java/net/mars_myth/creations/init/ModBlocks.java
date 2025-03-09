@@ -3,6 +3,7 @@ package net.mars_myth.creations.init;
 import net.mars_myth.creations.CreationsBeyond;
 import net.mars_myth.creations.block.connections.FoundationBlocks;
 import net.mars_myth.creations.block.custom.DougherBlock;
+import net.mars_myth.creations.block.custom.InfuserBlock;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -20,6 +21,11 @@ public class ModBlocks {
 
     public static final Block DOUGHER = registerBlock("dougher",
             new DougherBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)));
+
+    public static final Block INFUSER = registerBlock("infuser",
+            new InfuserBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK)));
+
+
 
 
     private static Block registerBlock(String name, Block block) {
