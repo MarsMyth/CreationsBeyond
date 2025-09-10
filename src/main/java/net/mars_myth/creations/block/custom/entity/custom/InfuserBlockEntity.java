@@ -33,48 +33,42 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class InfuserBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, ImplementedInventory {
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
 
-    private static final int INPUT_SLOT_1 = 0;
+    private static final int INPUT_SLOT = 0;
     private static final int INPUT_SLOT_2 = 1;
     private static final int OUTPUT_SLOT = 2;
-    private static final int ENERGY_ITEM_SLOT = 3;
 
-    protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 72;
-    private final int DEFAULT_MAX_PROGRESS = 72;
+    private int maxProgress = 70;
+    private final int DEFAULT_MAX_PROGRESS = 70;
+
+    protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> progress;
+                case 1 -> maxProgress;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0 -> progress = value;
+                case 1 -> maxProgress = value;
+            }
+        }
+
+        @Override
+        public int size() {
+            return 2;
+        }
+    };
 
     public InfuserBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.INFUSER_BE, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            @Override
-            public int get(int index) {
-                return switch (index) {
-                    case 0 -> InfuserBlockEntity.this.progress;
-                    case 1 -> InfuserBlockEntity.this.maxProgress;
-                    default -> 0;
-                };
-            }
-
-            @Override
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0: InfuserBlockEntity.this.progress = value;
-                    case 1: InfuserBlockEntity.this.maxProgress = value;
-                }
-            }
-
-            @Override
-            public int size() {
-                return 2;
-            }
-        };
-    }
-
-    @Override
-    public BlockPos getScreenOpeningData(ServerPlayerEntity player) {
-        return this.pos;
     }
 
     @Override
@@ -94,27 +88,32 @@ public class InfuserBlockEntity extends BlockEntity implements ExtendedScreenHan
     }
 
     @Override
+    public BlockPos getScreenOpeningData(ServerPlayerEntity player) {
+        return this.pos;
+    }
+
+    @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, inventory, registryLookup);
-        nbt.putInt("infuser.progress", progress);
-        nbt.putInt("infuser.max_progress", maxProgress);
+        nbt.putInt("mixing.progress", progress);
+        nbt.putInt("mixing.max_progress", maxProgress);
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.readNbt(nbt, inventory, registryLookup);
-        progress = nbt.getInt("infuser.progress");
-        maxProgress = nbt.getInt("infuser.max_progress");
+        this.progress = nbt.getInt("mixing.progress");
+        this.maxProgress = nbt.getInt("mixing.max_progress");
         super.readNbt(nbt, registryLookup);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        if(hasRecipe() && canInsertIntoOutputSlot()) {
+        if (hasRecipe()) {
             increaseCraftingProgress();
             markDirty(world, pos, state);
 
-            if(hasCraftingFinished()) {
+            if (hasCraftingFinished()) {
                 craftItem();
                 resetProgress();
             }
@@ -123,62 +122,69 @@ public class InfuserBlockEntity extends BlockEntity implements ExtendedScreenHan
         }
     }
 
+    private boolean hasCraftingFinished() {
+        if (progress == DEFAULT_MAX_PROGRESS) {
+            return true;
+        }
+        return false;
+    }
+
+    private void increaseCraftingProgress() {
+        if (progress < maxProgress) {
+            this.progress++;
+        }
+    }
+
+
     private void resetProgress() {
         this.progress = 0;
         this.maxProgress = DEFAULT_MAX_PROGRESS;
     }
 
     private void craftItem() {
-            Optional<RecipeEntry<InfuserRecipe>> recipe = getCurrentRecipe();
-
-            this.removeStack(INPUT_SLOT_1, 1);
-            this.removeStack(INPUT_SLOT_2, 1);
-            this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().output().getItem(),
-            this.getStack(OUTPUT_SLOT).getCount() + recipe.get().value().output().getCount()));
-
+        getCurrentRecipe().ifPresent(recipe -> {
+            ItemStack output = recipe.value().output();
+            // Only craft if the recipe is valid
+            if (hasRecipe()) {
+                // Remove ingredients and add the output item
+                removeStack(INPUT_SLOT, 1);
+                removeStack(INPUT_SLOT_2, 1);
+                setStack(OUTPUT_SLOT, new ItemStack(output.getItem(),
+                        getStack(OUTPUT_SLOT).getCount() + output.getCount()));
+            }
+        });
     }
 
-    private boolean hasCraftingFinished() {
-        return this.progress >= this.maxProgress;
-    }
-
-    private void increaseCraftingProgress() {
-        this.progress++;
-    }
-
-    private boolean canInsertIntoOutputSlot() {
-        return this.getStack(OUTPUT_SLOT).isEmpty() ||
-                this.getStack(OUTPUT_SLOT).getCount() < this.getStack(OUTPUT_SLOT).getMaxCount();
-    }
 
     private boolean hasRecipe() {
         Optional<RecipeEntry<InfuserRecipe>> recipe = getCurrentRecipe();
-        if(recipe.isEmpty()) {
-            return false;
-        }
+        if (recipe.isEmpty()) return false;
 
-
-        ItemStack output = recipe.get().value().getResult(null);
-        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+        ItemStack output = recipe.get().value().output();
+        return canInsertItemIntoOutputSlot(output) && canInsertAmountIntoOutputSlot(output.getCount());
     }
 
-    private Optional<RecipeEntry<InfuserRecipe>> getCurrentRecipe() {
+    public Optional<RecipeEntry<InfuserRecipe>> getCurrentRecipe() {
         return Objects.requireNonNull(this.getWorld()).getRecipeManager()
-                .getFirstMatch(ModRecipes.INFUSER_TYPE, new InfuserRecipeInput(inventory.get(INPUT_SLOT_1), inventory.get(INPUT_SLOT_2)), this.getWorld());
+                .getFirstMatch(ModRecipes.INFUSING_TYPE, new InfuserRecipeInput(
+                        inventory.get(0),
+                        inventory.get(1)
+                ), this.getWorld());
     }
+
 
 
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {
-        return this.getStack(OUTPUT_SLOT).isEmpty() || this.getStack(OUTPUT_SLOT).getItem() == output.getItem();
+        ItemStack current = getStack(OUTPUT_SLOT);
+        return current.isEmpty() || current.getItem() == output.getItem();
     }
 
-    private boolean canInsertAmountIntoOutputSlot(int count) {
-        int maxCount = this.getStack(OUTPUT_SLOT).isEmpty() ? 64 : this.getStack(OUTPUT_SLOT).getMaxCount();
-        int currentCount = this.getStack(OUTPUT_SLOT).getCount();
-
-        return maxCount >= currentCount + count;
+    private boolean canInsertAmountIntoOutputSlot(int amount) {
+        ItemStack current = getStack(OUTPUT_SLOT);
+        return current.getCount() + amount <= current.getMaxCount();
     }
+
 
     @Nullable
     @Override
@@ -186,4 +192,8 @@ public class InfuserBlockEntity extends BlockEntity implements ExtendedScreenHan
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
+    }
 }

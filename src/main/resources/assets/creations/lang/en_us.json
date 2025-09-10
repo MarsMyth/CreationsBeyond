@@ -1,6 +1,9 @@
 {
 
-  "block.creations.infused_foundation": "Infused Foundation",
-  "gui.creations.dougher": "Dough Maker"
+  "block.creations.infused_foundation": "Simple Infused Foundation",
+  "gui.creations.dougher": "Dough Maker",
+
+  "block.creations.infuser": "Infuser",
+  "item.creations.simple_alloy": "Simple Alloy"
 
 }

@@ -1,0 +1,6 @@
+{
+  "type": "creations:infusing",
+  "ingredient1": { "item": "creations:simple_alloy" },
+  "ingredient2": { "item": "minecraft:spruce_planks" },
+  "result": { "item": "creations:infused_foundation", "count": 1 }
+}

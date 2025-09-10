@@ -31,7 +31,7 @@ public class CreationsBeyondREIClient implements REIClientPlugin {
         registry.registerRecipeFiller(DougherRecipe.class, ModRecipes.DOUGHER_TYPE,
                 DougherDisplay::new);
 
-        registry.registerRecipeFiller(InfuserRecipe.class, ModRecipes.INFUSER_TYPE,
+        registry.registerRecipeFiller(InfuserRecipe.class, ModRecipes.INFUSING_TYPE,
                 InfuserDisplay::new);
     }
 

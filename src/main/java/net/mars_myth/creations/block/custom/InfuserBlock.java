@@ -1,7 +1,6 @@
 package net.mars_myth.creations.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import net.mars_myth.creations.block.custom.entity.custom.DougherBlockEntity;
 import net.mars_myth.creations.block.custom.entity.custom.InfuserBlockEntity;
 import net.mars_myth.creations.init.ModBlockEntities;
 import net.minecraft.block.BlockRenderType;

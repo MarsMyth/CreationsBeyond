@@ -3,6 +3,7 @@ package net.mars_myth.creations.init;
 import net.mars_myth.creations.CreationsBeyond;
 import net.mars_myth.creations.recipe.DougherRecipe;
 import net.mars_myth.creations.recipe.InfuserRecipe;
+import net.mars_myth.creations.recipe.serilizer.InfuserSerializer;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
@@ -20,13 +21,13 @@ public class ModRecipes {
                 }
             });
 
-    public static final RecipeSerializer<InfuserRecipe> INFUSER_SERIALIZER = Registry.register(
-            Registries.RECIPE_SERIALIZER, Identifier.of(CreationsBeyond.MOD_ID, "infusing"), new InfuserRecipe.Serializer());
-    public static final RecipeType<InfuserRecipe> INFUSER_TYPE = Registry.register(
-            Registries.RECIPE_TYPE, Identifier.of(CreationsBeyond.MOD_ID, "infusing"), new RecipeType<>() {
-                @Override
+    public static final RecipeSerializer<InfuserRecipe> INFUSING_SERIALIZER =
+            Registry.register(Registries.RECIPE_SERIALIZER, Identifier.of("creations", "infusing"), new InfuserSerializer());
+
+    public static final RecipeType<InfuserRecipe> INFUSING_TYPE =
+            Registry.register(Registries.RECIPE_TYPE, Identifier.of("creations", "infusing"), new RecipeType<>() {
                 public String toString() {
-                    return "infusing";
+                    return "creations:infusing";
                 }
             });
 

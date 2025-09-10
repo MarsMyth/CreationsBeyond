@@ -1,34 +1,29 @@
 package net.mars_myth.creations.recipe;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.mars_myth.creations.init.ModRecipes;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-public record InfuserRecipe(Ingredient inputItem, ItemStack output) implements Recipe<InfuserRecipeInput> {
-    @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> list = DefaultedList.of();
-        list.add(this.inputItem);
-        return list;
+public class InfuserRecipe implements Recipe<InfuserRecipeInput> {
+    private final Ingredient inputItem1;
+    private final Ingredient inputItem2;
+    private final ItemStack output;
+
+    public InfuserRecipe(Ingredient inputItem1, Ingredient inputItem2, ItemStack output) {
+        this.inputItem1 = inputItem1;
+        this.inputItem2 = inputItem2;
+        this.output = output;
     }
 
     @Override
     public boolean matches(InfuserRecipeInput input, World world) {
-        if (world.isClient()) {
-            return false;
-        }
-
-        return inputItem.test(input.getStackInSlot(0)) && inputItem.test(input.getStackInSlot(1));
+        return (inputItem1.test(input.getStackInSlot(0)) && inputItem2.test(input.getStackInSlot(1))) ||
+                (inputItem1.test(input.getStackInSlot(1)) && inputItem2.test(input.getStackInSlot(0)));
     }
 
     @Override
@@ -42,39 +37,29 @@ public record InfuserRecipe(Ingredient inputItem, ItemStack output) implements R
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+    public ItemStack getResult(RegistryWrapper.WrapperLookup lookup) {
         return output;
     }
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.INFUSER_SERIALIZER;
+        return ModRecipes.INFUSING_SERIALIZER;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.INFUSER_TYPE;
+        return ModRecipes.INFUSING_TYPE;
     }
 
-    public static class Serializer implements RecipeSerializer<InfuserRecipe> {
-        public static final MapCodec<InfuserRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("ingredient").forGetter(InfuserRecipe::inputItem),
-                ItemStack.CODEC.fieldOf("result").forGetter(InfuserRecipe::output)
-        ).apply(inst, InfuserRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, InfuserRecipe> STREAM_CODEC =
-                PacketCodec.tuple(
-                        Ingredient.PACKET_CODEC, InfuserRecipe::inputItem,
-                        ItemStack.PACKET_CODEC, InfuserRecipe::output,
-                        InfuserRecipe::new);
+    public ItemStack output() {
+        return output;
+    }
 
-        @Override
-        public MapCodec<InfuserRecipe> codec() {
-            return CODEC;
-        }
+    public Ingredient getinputItem1() {
+        return inputItem1;
+    }
 
-        @Override
-        public PacketCodec<RegistryByteBuf, InfuserRecipe> packetCodec() {
-            return STREAM_CODEC;
-        }
+    public Ingredient getinputItem2() {
+        return inputItem2;
     }
 }

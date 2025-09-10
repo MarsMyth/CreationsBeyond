@@ -1,6 +1,5 @@
 package net.mars_myth.creations.screen.custom;
 
-import net.mars_myth.creations.block.custom.entity.custom.DougherBlockEntity;
 import net.mars_myth.creations.block.custom.entity.custom.InfuserBlockEntity;
 import net.mars_myth.creations.init.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
@@ -24,17 +23,17 @@ public class InfuserScreenHandler extends ScreenHandler {
     }
 
     public InfuserScreenHandler(int syncId, PlayerInventory playerInventory,
-                                     BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+                                        BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
         super(ModScreenHandlers.INFUSER_SCREEN_HANDLER, syncId);
-        checkSize((Inventory) blockEntity, 4);
+        checkSize((Inventory) blockEntity, 3);
         this.inventory = (Inventory) blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
         this.blockEntity = ((InfuserBlockEntity) blockEntity);
 
-        this.addSlot(new Slot(inventory, 0, 54, 18));
-        this.addSlot(new Slot(inventory, 1, 54, 51));
+        this.addSlot(new Slot(inventory, 0, 54, 17));
+        this.addSlot(new Slot(inventory, 1, 54, 53));
         this.addSlot(new Slot(inventory, 2, 104, 34));
-        this.addSlot(new Slot(inventory, 3, 152, 62));
+
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
@@ -62,11 +61,13 @@ public class InfuserScreenHandler extends ScreenHandler {
         return maxProgress != 0 && progress != 0 ? progress * crystalPixelSize / maxProgress : 0;
     }
 
+
+
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
             if (invSlot < this.inventory.size()) {
